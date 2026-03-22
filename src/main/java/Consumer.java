@@ -35,14 +35,19 @@ public class Consumer {
              * routing key
              */
 
+            // If we set basicQos to 1 then: Consumer gets 1 message → processes → ACK → gets next
+            channel.basicQos(1);
+
             System.out.println("Waiting for messages...");
 
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String message = new String(delivery.getBody());
                 System.out.println(" Received: " + message);
+
+                channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
             };
 
-            channel.basicConsume(QUEUE_NAME, true, deliverCallback, consumerTag -> {
+            channel.basicConsume(QUEUE_NAME, false, deliverCallback, consumerTag -> {
             });
             /*
             * queue name

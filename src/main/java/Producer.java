@@ -38,13 +38,19 @@ public class Producer {
              * routing key
              */
 
-            String message = "Hello via Exchange";
-            channel.basicPublish(EXCHANGE_NAME, ROUTING_KEY,null, message.getBytes());
-            /*
-            * exchange("" means default exchange will be used i.e. direct exchange),
-            * routing key,
-            * props(message meta data)
-            * message.getBytes()(Actual message payload)*/
+            String message = "Hello via Exchange: ";
+
+            StringBuilder messageBuilder = new StringBuilder(message);
+
+            for(int i=0;i<50;i++){
+                messageBuilder.append(i);
+                channel.basicPublish(EXCHANGE_NAME, ROUTING_KEY,null, messageBuilder.toString().getBytes());
+                /*
+                 * exchange("" means default exchange will be used i.e. direct exchange),
+                 * routing key,
+                 * props(message meta data)
+                 * message.getBytes()(Actual message payload)*/
+            }
 
             System.out.println("Sent: "+message);
             channel.close();
