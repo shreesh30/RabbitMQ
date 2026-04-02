@@ -16,7 +16,16 @@ public class MessageController {
 
     @PostMapping("/create")
     public String sendOrder(@RequestBody Order order){
-        producer.sendOrder(order);
+        if(order.getItem().equals("pizza")){
+            for(int i=0;i<10000;i++){
+                producer.sendPizzaOrder(order);
+            }
+        }else{
+            for(int i=0;i<10000;i++){
+                producer.sendBurgerOrder(order);
+            }
+        }
+
         return "Order sent";
     }
 }
