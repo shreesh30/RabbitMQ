@@ -1,5 +1,6 @@
 package com.engineering.rabbitmq.producer;
 
+import com.engineering.rabbitmq.model.Chunk;
 import com.engineering.rabbitmq.model.Order;
 import com.engineering.rabbitmq.utils.Utils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -24,5 +25,11 @@ public class MessageProducer {
         System.out.println("Start sendPizzaOrder");
         rabbitTemplate.convertAndSend(Utils.ORDER_EXCHANGE, Utils.PIZZA_ORDER_CREATED_ROUTING_KEY, order);
         System.out.println("Send: "+order);
+    }
+
+    public void sendChunk(Chunk chunk){
+        System.out.println("Start sendChunk");
+        rabbitTemplate.convertAndSend(Utils.ORDER_EXCHANGE, Utils.CHUNK_CREATED_ROUTING_KEY, chunk);
+        System.out.println("Send: "+chunk);
     }
 }
