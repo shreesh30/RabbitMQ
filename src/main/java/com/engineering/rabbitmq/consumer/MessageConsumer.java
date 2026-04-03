@@ -1,12 +1,9 @@
 package com.engineering.rabbitmq.consumer;
 
 import com.engineering.rabbitmq.model.Chunk;
-import com.engineering.rabbitmq.model.Order;
 import com.engineering.rabbitmq.utils.Utils;
 import com.rabbitmq.client.Channel;
-import org.jspecify.annotations.Nullable;
 import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
