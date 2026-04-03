@@ -10,6 +10,9 @@ import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Configuration
 public class RabbitMQConfig {
 
@@ -55,27 +58,56 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue chunkQueue(){
-        return new Queue(Utils.CHUNK_QUEUE, true);
+        Map<String, Object> args = new HashMap<>();
+        args.put("x-dead-letter-exchange", Utils.RETRY_EXCHANGE);
+        args.put("x-dead-letter-routing-key", Utils.CHUNK_RETRY_ROUTING_KEY);
+
+        return new Queue(Utils.CHUNK_QUEUE, true, false, false, args);
+    }
+
+    @Bean
+    public Queue retryQueue(){
+        Map<String, Object> args = new HashMap<>();
+        args.put("x-message-ttl", 30000);
+        args.put("x-dead-letter-exchange", Utils.CHUNK_EXCHANGE);
+        args.put("x-dead-letter-routing-key", Utils.CHUNK_CREATED_ROUTING_KEY);
+
+        return new Queue(Utils.RETRY_QUEUE, true, false, false, args);
     }
 
 
     @Bean
-    public DirectExchange exchange(){
+    public DirectExchange orderExchange(){
         return new DirectExchange(Utils.ORDER_EXCHANGE);
     }
 
     @Bean
-    public Binding bindingBurger(Queue burgerQueue, DirectExchange exchange){
-        return BindingBuilder.bind(burgerQueue).to(exchange).with(Utils.BURGER_ORDER_CREATED_ROUTING_KEY);
+    public DirectExchange chunkExchange(){
+        return new DirectExchange(Utils.CHUNK_EXCHANGE);
     }
 
     @Bean
-    public Binding bindingPizza(Queue pizzaQueue, DirectExchange exchange){
-        return BindingBuilder.bind(pizzaQueue).to(exchange).with(Utils.PIZZA_ORDER_CREATED_ROUTING_KEY);
+    public DirectExchange retryExchange(){
+        return new DirectExchange(Utils.RETRY_EXCHANGE);
     }
 
     @Bean
-    public Binding bindingChunk(Queue chunkQueue, DirectExchange exchange){
-        return BindingBuilder.bind(chunkQueue).to(exchange).with(Utils.CHUNK_CREATED_ROUTING_KEY);
+    public Binding bindingBurger(Queue burgerQueue, DirectExchange orderExchange){
+        return BindingBuilder.bind(burgerQueue).to(orderExchange).with(Utils.BURGER_ORDER_CREATED_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding bindingPizza(Queue pizzaQueue, DirectExchange orderExchange){
+        return BindingBuilder.bind(pizzaQueue).to(orderExchange).with(Utils.PIZZA_ORDER_CREATED_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding bindingChunk(Queue chunkQueue, DirectExchange chunkExchange){
+        return BindingBuilder.bind(chunkQueue).to(chunkExchange).with(Utils.CHUNK_CREATED_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding bindingRetry(Queue retryQueue, DirectExchange retryExchange){
+        return BindingBuilder.bind(retryQueue).to(retryExchange).with(Utils.CHUNK_RETRY_ROUTING_KEY);
     }
 }

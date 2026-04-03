@@ -29,7 +29,7 @@ public class MessageProducer {
 
     public void sendChunk(Chunk chunk){
         System.out.println("Start sendChunk");
-        rabbitTemplate.convertAndSend(Utils.ORDER_EXCHANGE, Utils.CHUNK_CREATED_ROUTING_KEY, chunk);
-        System.out.println("Send: "+chunk);
+        rabbitTemplate.convertAndSend(Utils.CHUNK_EXCHANGE, Utils.CHUNK_CREATED_ROUTING_KEY, chunk);
+        System.out.println("Sent: "+chunk);
     }
 }
