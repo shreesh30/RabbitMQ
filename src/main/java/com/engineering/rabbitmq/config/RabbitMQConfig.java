@@ -47,16 +47,6 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Queue burgerQueue(){
-        return new Queue(Utils.BURGER_QUEUE, true);
-    }
-
-    @Bean
-    public Queue pizzaQueue(){
-        return new Queue(Utils.PIZZA_QUEUE, true);
-    }
-
-    @Bean
     public Queue chunkQueue(){
         Map<String, Object> args = new HashMap<>();
         args.put("x-dead-letter-exchange", Utils.RETRY_EXCHANGE);
@@ -75,12 +65,6 @@ public class RabbitMQConfig {
         return new Queue(Utils.RETRY_QUEUE, true, false, false, args);
     }
 
-
-    @Bean
-    public DirectExchange orderExchange(){
-        return new DirectExchange(Utils.ORDER_EXCHANGE);
-    }
-
     @Bean
     public DirectExchange chunkExchange(){
         return new DirectExchange(Utils.CHUNK_EXCHANGE);
@@ -89,16 +73,6 @@ public class RabbitMQConfig {
     @Bean
     public DirectExchange retryExchange(){
         return new DirectExchange(Utils.RETRY_EXCHANGE);
-    }
-
-    @Bean
-    public Binding bindingBurger(Queue burgerQueue, DirectExchange orderExchange){
-        return BindingBuilder.bind(burgerQueue).to(orderExchange).with(Utils.BURGER_ORDER_CREATED_ROUTING_KEY);
-    }
-
-    @Bean
-    public Binding bindingPizza(Queue pizzaQueue, DirectExchange orderExchange){
-        return BindingBuilder.bind(pizzaQueue).to(orderExchange).with(Utils.PIZZA_ORDER_CREATED_ROUTING_KEY);
     }
 
     @Bean

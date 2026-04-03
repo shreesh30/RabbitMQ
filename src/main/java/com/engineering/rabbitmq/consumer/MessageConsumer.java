@@ -30,11 +30,6 @@ public class MessageConsumer {
     @Autowired
     RabbitTemplate rabbitTemplate;
 
-    @RabbitListener(queues = {Utils.BURGER_QUEUE, Utils.PIZZA_QUEUE})
-    public void receiveOrder(Order order){
-        System.out.println("Received: "+order);
-    }
-
     @RabbitListener(queues = Utils.CHUNK_QUEUE, containerFactory = "factory")
     public void receiveChunks(Chunk chunk, Channel channel, Message message) throws IOException {
         System.out.println("Receiving chunks");
